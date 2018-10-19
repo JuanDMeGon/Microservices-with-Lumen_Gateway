@@ -48,7 +48,7 @@ class AuthorService
 
     /**
      * Update an instance of author using the author service
-     * @return [type] [description]
+     * @return string
      */
     public function editAuthor($data, $author)
     {
