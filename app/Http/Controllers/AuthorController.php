@@ -70,5 +70,6 @@ class AuthorController extends Controller
      */
     public function destroy($author)
     {
+        return $this->successResponse($this->authorService->deleteAuthor($author));
     }
 }
