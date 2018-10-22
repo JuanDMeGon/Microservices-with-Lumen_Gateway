@@ -5,3 +5,4 @@ Homestead.yaml
 .env
 database/database.sqlite
 *sublime*
+storage/*.key
