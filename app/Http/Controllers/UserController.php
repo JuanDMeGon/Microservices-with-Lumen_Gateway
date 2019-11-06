@@ -29,7 +29,7 @@ class UserController extends Controller
     {
         $users = User::all();
 
-        return $this->successResponse($users);
+        return $this->validResponse($users);
     }
 
     /**
@@ -46,9 +46,12 @@ class UserController extends Controller
 
         $this->validate($request, $rules);
 
-        $user = User::create($request->all());
+        $fields = $request->all();
+        $fields['password'] = Hash::make($request->password);
 
-        return $this->successResponse($user, Response::HTTP_CREATED);
+        $user = User::create($fields);
+
+        return $this->validResponse($user, Response::HTTP_CREATED);
     }
 
     /**
@@ -59,7 +62,7 @@ class UserController extends Controller
     {
         $user = User::findOrFail($user);
 
-        return $this->successResponse($user);
+        return $this->validResponse($user);
     }
 
     /**
@@ -70,7 +73,7 @@ class UserController extends Controller
     {
         $rules = [
             'name' => 'max:255',
-            'email' => 'email|unique:user,email',
+            'email' => 'email|unique:user,email,' . $user,
             'password' => 'min:8|confirmed',
         ];
 
@@ -80,13 +83,17 @@ class UserController extends Controller
 
         $user->fill($request->all());
 
+        if ($request->has('password')) {
+            $user->password = Hash::make($request->password);
+        }
+
         if ($user->isClean()) {
             return $this->errorResponse('At least one value must change', Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         $user->save();
 
-        return $this->successResponse($user);
+        return $this->validResponse($user);
     }
 
     /**
@@ -99,6 +106,6 @@ class UserController extends Controller
 
         $user->delete();
 
-        return $this->successResponse($user);
+        return $this->validResponse($user);
     }
 }
